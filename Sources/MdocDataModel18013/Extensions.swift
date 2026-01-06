@@ -413,7 +413,7 @@ extension Array where Element == DisplayMetadata {
 	}
     // get the first logo with the given locale or the first element if not found
     public func getLogo(_ uiCulture: String?) -> LogoMetadata? {
-		(first(where: { $0.locale?.language.languageCode?.identifier == uiCulture ?? Locale.current.language.languageCode?.identifier }) ?? first)?.logo
+        (first(where: { $0.locale?.compatibleLanguageCode == uiCulture ?? Locale.current.compatibleLanguageCode }) ?? first)?.logo
 	}
 }
 
@@ -431,3 +431,13 @@ let usDateFormatter: DateFormatter = {
     df.dateFormat = "yyyy-MM-dd"
     return df
 }()
+
+extension Locale {
+    var compatibleLanguageCode: String? {
+        if #available(iOS 16.0, *) {
+            return self.language.languageCode?.identifier
+        } else {
+            return self.languageCode
+        }
+    }
+}
